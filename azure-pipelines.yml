@@ -1,0 +1,59 @@
+trigger :
+– QA
+variables:
+– group: mask-salesforce
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+– task: NodeTool@0 
+  inputs:
+    versionSpec: '14.x' # replace this value with the version that you need for your project
+
+– script:
+    sudo npm install @salesforce/cli –global
+  displayName: "Install Salesforce CLI"
+– task: DownloadSecureFile@1
+  name: serverkey_qa
+  inputs:
+    secureFile: "server.key"
+  condition: and(succeeded(), eq(variables[‘Build.SourceBranch’], 'refs/heads/QAtrigger :
+– QA
+variables:
+– group: mask-salesforce
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+– task: NodeTool@0 
+  inputs:
+    versionSpec: '14.x' # replace this value with the version that you need for your project
+
+– script:
+    sudo npm install @salesforce/cli –global
+  displayName: "Install Salesforce CLI"
+– task: DownloadSecureFile@1
+  name: serverkey_qa
+  inputs:
+    secureFile: "server.key"
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/QA'))
+– script:
+    sudo sf org login jwt –username $(sf-username-qa) –jwt-key-file $(serverkey_qa.secureFilePath) –client-id $(sf-clientid-qa) –instance-url $(sf-endpoint-sandbox)
+  displayName: "Login into Salesforce QA Sandbox"
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/QA'))
+
+– script:
+    sudo sf project deploy start -o $(sf-username-qa) –source-dir ParentDir
+  displayName: “Deploy to Salesforce QA Sandbox”
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/QA'))))
+– script:
+    sudo sf org login jwt –username $(sf-username-qa) –jwt-key-file $(serverkey_qa.secureFilePath) –client-id $(sf-clientid-qa) –instance-url $(sf-endpoint-sandbox)
+  displayName: "Login into Salesforce QA Sandbox"
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/QA'))
+
+– script:
+    sudo sf project deploy start -o $(sf-username-qa) –source-dir ParentDir
+  displayName: “Deploy to Salesforce QA Sandbox”
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/QA'))
